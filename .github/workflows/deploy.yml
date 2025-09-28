@@ -71,15 +71,15 @@ jobs:
             git fetch --depth=1 origin ${{ github.ref_name }}
             git checkout -f FETCH_HEAD
 
-            cat > .deploy.env <<EOF
-            APP_IMAGE=ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-app:${{ github.sha }}
-            WEB_IMAGE=ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-web:${{ github.sha }}
-            APP_URL=${{ secrets.APP_URL }}
-            APP_KEY=${{ secrets.APP_KEY }}
-            DB_DATABASE=${{ secrets.DB_DATABASE }}
-            DB_USERNAME=${{ secrets.DB_USERNAME }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            EOF
+            {
+              echo "APP_IMAGE=ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-app:${{ github.sha }}";
+              echo "WEB_IMAGE=ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-web:${{ github.sha }}";
+              echo "APP_URL=${{ secrets.APP_URL }}";
+              echo "APP_KEY=${{ secrets.APP_KEY }}";
+              echo "DB_DATABASE=${{ secrets.DB_DATABASE }}";
+              echo "DB_USERNAME=${{ secrets.DB_USERNAME }}";
+              echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}";
+            } > .deploy.env
 
             docker login ${{ env.REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME || github.actor }} -p ${{ secrets.REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
             docker network inspect heroes-net >/dev/null 2>&1 || docker network create heroes-net
