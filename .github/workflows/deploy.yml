@@ -6,8 +6,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_APP: ghcr.io/${{ github.repository_owner }}/heroes-app
-  IMAGE_WEB: ghcr.io/${{ github.repository_owner }}/heroes-web
 
 jobs:
   build-and-deploy:
@@ -19,6 +17,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Lowercase owner
+        id: vars
+        shell: bash
+        run: echo "owner_lc=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -37,8 +40,8 @@ jobs:
           target: app
           push: true
           tags: |
-            ${{ env.IMAGE_APP }}:latest
-            ${{ env.IMAGE_APP }}:${{ github.sha }}
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-app:latest
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-app:${{ github.sha }}
 
       - name: Build and push web image
         uses: docker/build-push-action@v6
@@ -47,8 +50,8 @@ jobs:
           target: web
           push: true
           tags: |
-            ${{ env.IMAGE_WEB }}:latest
-            ${{ env.IMAGE_WEB }}:${{ github.sha }}
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-web:latest
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-web:${{ github.sha }}
 
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.2.0
@@ -68,8 +71,8 @@ jobs:
             git fetch --depth=1 origin ${{ github.ref_name }}
             git checkout -f FETCH_HEAD
 
-            echo "APP_IMAGE=${{ env.IMAGE_APP }}:${{ github.sha }}" > .deploy.env
-            echo "WEB_IMAGE=${{ env.IMAGE_WEB }}:${{ github.sha }}" >> .deploy.env
+            echo "APP_IMAGE=ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-app:${{ github.sha }}" > .deploy.env
+            echo "WEB_IMAGE=ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-web:${{ github.sha }}" >> .deploy.env
             echo "APP_URL=${{ secrets.APP_URL }}" >> .deploy.env
             echo "APP_KEY=${{ secrets.APP_KEY }}" >> .deploy.env
             echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .deploy.env
