@@ -68,6 +68,7 @@ class RestrictGuestsMiddleware
 
         return redirect()->route('login');
     }
+    //
 }
 
 
