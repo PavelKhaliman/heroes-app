@@ -18,7 +18,7 @@ class RestrictGuestsMiddleware
                 $isPost = $request->isMethod('POST');
 
                 $allowed = (
-                    ($isGet && (($request->is('/') || $request->is('')) || $request->is('clan') || $request->is('link') || $request->is('account')))
+                    ($isGet && (($request->is('/') || $request->is('')) || $request->is('link') || $request->is('account')))
                     || ($isPost && $request->is('logout'))
                     || $request->is('media/*') || $request->is('build/*') || $request->is('assets/*') || $request->is('favicon.ico')
                 );
@@ -39,9 +39,22 @@ class RestrictGuestsMiddleware
 
         $allowed = (
             // Pages allowed for guests
-            ($isGet && (($request->is('/') || $request->is('')) || $request->is('clan') || $request->is('link') || $request->is('login')))
-            // Login submit
-            || ($isPost && $request->is('login'))
+            ($isGet && (
+                ($request->is('/') || $request->is(''))
+                || $request->is('link')
+                || $request->is('login')
+                || $request->is('register')
+                || $request->is('clan')
+                || $request->is('clan/regulation')
+                || $request->is('clan/coslist')
+                || $request->is('clan/application')
+            ))
+            // Login submit / Register submit / Clan application submit
+            || ($isPost && (
+                $request->is('login')
+                || $request->is('register')
+                || $request->is('clan/application')
+            ))
             // Media and static assets
             || $request->is('media/*')
             || $request->is('build/*')

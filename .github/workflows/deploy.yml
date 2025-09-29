@@ -55,11 +55,21 @@ jobs:
 
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          APP_IMAGE: ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-app:${{ github.sha }}
+          WEB_IMAGE: ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-web:${{ github.sha }}
+          APP_URL: ${{ secrets.APP_URL }}
+          APP_KEY: ${{ secrets.APP_KEY }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          WEB_PORT: ${{ secrets.WEB_PORT }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
+          envs: APP_IMAGE,WEB_IMAGE,APP_URL,APP_KEY,DB_DATABASE,DB_USERNAME,DB_PASSWORD,WEB_PORT
           script: |
             set -e
             mkdir -p /srv/heroes-app
@@ -71,15 +81,15 @@ jobs:
             git fetch --depth=1 origin ${{ github.ref_name }}
             git checkout -f FETCH_HEAD
 
-            {
-              echo "APP_IMAGE=ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-app:${{ github.sha }}";
-              echo "WEB_IMAGE=ghcr.io/${{ steps.vars.outputs.owner_lc }}/heroes-web:${{ github.sha }}";
-              echo "APP_URL=${{ secrets.APP_URL }}";
-              echo "APP_KEY=${{ secrets.APP_KEY }}";
-              echo "DB_DATABASE=${{ secrets.DB_DATABASE }}";
-              echo "DB_USERNAME=${{ secrets.DB_USERNAME }}";
-              echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}";
-            } > .deploy.env
+            printf "%s\n" \
+              "APP_IMAGE=$APP_IMAGE" \
+              "WEB_IMAGE=$WEB_IMAGE" \
+              "APP_URL=$APP_URL" \
+              "APP_KEY=$APP_KEY" \
+              "DB_DATABASE=$DB_DATABASE" \
+              "DB_USERNAME=$DB_USERNAME" \
+              "DB_PASSWORD=$DB_PASSWORD" \
+              "WEB_PORT=${WEB_PORT:-8080}" > .deploy.env
 
             docker login ${{ env.REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME || github.actor }} -p ${{ secrets.REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
             docker network inspect heroes-net >/dev/null 2>&1 || docker network create heroes-net
@@ -88,7 +98,7 @@ jobs:
             . .deploy.env
             set +a
 
-            docker compose -f docker-compose.prod.yml pull || true
-            docker compose -f docker-compose.prod.yml up -d
+            docker compose --env-file .deploy.env -f docker-compose.prod.yml pull || true
+            docker compose --env-file .deploy.env -f docker-compose.prod.yml up -d
 
             docker image prune -f || true
