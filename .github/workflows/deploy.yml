@@ -71,7 +71,7 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           envs: APP_IMAGE,WEB_IMAGE,APP_URL,APP_KEY,DB_DATABASE,DB_USERNAME,DB_PASSWORD,WEB_PORT
           script: |
-            set -e
+            set -euo pipefail
             mkdir -p /srv/heroes-app
             cd /srv/heroes-app
             if [ ! -d .git ]; then
@@ -81,24 +81,32 @@ jobs:
             git fetch --depth=1 origin ${{ github.ref_name }}
             git checkout -f FETCH_HEAD
 
+            # sanitize secrets (strip CR, trailing spaces, trailing backslash)
+            APP_KEY_SAN=$(printf "%s" "$APP_KEY" | tr -d '\r' | sed -e 's/[[:space:]]*$//' -e 's/\\$//')
+            DB_DATABASE_SAN=$(printf "%s" "$DB_DATABASE" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
+            DB_USERNAME_SAN=$(printf "%s" "$DB_USERNAME" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
+            DB_PASSWORD_SAN=$(printf "%s" "$DB_PASSWORD" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
+            APP_URL_SAN=$(printf "%s" "$APP_URL" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
+            WEB_PORT_SAN=${WEB_PORT:-8080}
+
+            # write .env atomically
             printf "%s\n" \
               "APP_IMAGE=$APP_IMAGE" \
               "WEB_IMAGE=$WEB_IMAGE" \
-              "APP_URL=$APP_URL" \
-              "APP_KEY=$APP_KEY" \
-              "DB_DATABASE=$DB_DATABASE" \
-              "DB_USERNAME=$DB_USERNAME" \
-              "DB_PASSWORD=$DB_PASSWORD" \
-              "WEB_PORT=${WEB_PORT:-8080}" > .deploy.env
+              "APP_URL=$APP_URL_SAN" \
+              "APP_KEY=$APP_KEY_SAN" \
+              "DB_DATABASE=$DB_DATABASE_SAN" \
+              "DB_USERNAME=$DB_USERNAME_SAN" \
+              "DB_PASSWORD=$DB_PASSWORD_SAN" \
+              "WEB_PORT=$WEB_PORT_SAN" > .env
+
+            # validate APP_KEY length (32 bytes)
+            php -r '$k=getenv("APP_KEY"); if(str_starts_with($k,"base64:")){$r=base64_decode(substr($k,7),true); if(strlen($r)!==32){fwrite(STDERR,"Bad APP_KEY\n"); exit(1);} }'
 
             docker login ${{ env.REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME || github.actor }} -p ${{ secrets.REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
             docker network inspect heroes-net >/dev/null 2>&1 || docker network create heroes-net
 
-            set -a
-            . .deploy.env
-            set +a
-
-            docker compose --env-file .deploy.env -f docker-compose.prod.yml pull || true
-            docker compose --env-file .deploy.env -f docker-compose.prod.yml up -d
+            docker compose --env-file .env -f docker-compose.prod.yml pull || true
+            docker compose --env-file .env -f docker-compose.prod.yml up -d
 
             docker image prune -f || true
