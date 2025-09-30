@@ -64,14 +64,21 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           WEB_PORT: ${{ secrets.WEB_PORT }}
+          DOMAIN: ${{ secrets.DOMAIN }}
+          ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
-          envs: APP_IMAGE,WEB_IMAGE,APP_URL,APP_KEY,DB_DATABASE,DB_USERNAME,DB_PASSWORD,WEB_PORT
+          envs: APP_IMAGE,WEB_IMAGE,APP_URL,APP_KEY,DB_DATABASE,DB_USERNAME,DB_PASSWORD,WEB_PORT,DOMAIN,ACME_EMAIL
           script: |
             set -euo pipefail
+            if [ -z "${DOMAIN:-}" ]; then
+              echo "[deploy] DOMAIN secret is required" >&2
+              exit 1
+            fi
+
             mkdir -p /srv/heroes-app
             cd /srv/heroes-app
             if [ ! -d .git ]; then
@@ -81,13 +88,15 @@ jobs:
             git fetch --depth=1 origin ${{ github.ref_name }}
             git checkout -f FETCH_HEAD
 
-            # sanitize secrets (strip CR, trailing spaces, trailing backslash)
-            APP_KEY_SAN=$(printf "%s" "$APP_KEY" | tr -d '\r' | sed -e 's/[[:space:]]*$//' -e 's/\\$//')
-            DB_DATABASE_SAN=$(printf "%s" "$DB_DATABASE" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
-            DB_USERNAME_SAN=$(printf "%s" "$DB_USERNAME" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
-            DB_PASSWORD_SAN=$(printf "%s" "$DB_PASSWORD" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
-            APP_URL_SAN=$(printf "%s" "$APP_URL" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
+            # sanitize secrets
+            APP_KEY_SAN=$(printf "%s" "${APP_KEY:-}" | tr -d '\r' | sed -e 's/[[:space:]]*$//' -e 's/\\$//')
+            DB_DATABASE_SAN=$(printf "%s" "${DB_DATABASE:-}" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
+            DB_USERNAME_SAN=$(printf "%s" "${DB_USERNAME:-}" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
+            DB_PASSWORD_SAN=$(printf "%s" "${DB_PASSWORD:-}" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
+            APP_URL_SAN=$(printf "%s" "${APP_URL:-}" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
             WEB_PORT_SAN=${WEB_PORT:-8080}
+            DOMAIN_SAN=$(printf "%s" "${DOMAIN:-}" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
+            ACME_EMAIL_SAN=$(printf "%s" "${ACME_EMAIL:-}" | tr -d '\r' | sed -e 's/[[:space:]]*$//')
 
             # write .env atomically
             printf "%s\n" \
@@ -98,15 +107,35 @@ jobs:
               "DB_DATABASE=$DB_DATABASE_SAN" \
               "DB_USERNAME=$DB_USERNAME_SAN" \
               "DB_PASSWORD=$DB_PASSWORD_SAN" \
-              "WEB_PORT=$WEB_PORT_SAN" > .env
+              "WEB_PORT=$WEB_PORT_SAN" \
+              "DOMAIN=$DOMAIN_SAN" \
+              "ACME_EMAIL=$ACME_EMAIL_SAN" > .env
 
             # validate APP_KEY length (32 bytes)
             php -r '$k=getenv("APP_KEY"); if(str_starts_with($k,"base64:")){$r=base64_decode(substr($k,7),true); if(strlen($r)!==32){fwrite(STDERR,"Bad APP_KEY\n"); exit(1);} }'
+
+            # generate Caddyfile with the actual domain to avoid empty var parsing
+            mkdir -p docker/caddy
+            cat > docker/caddy/Caddyfile <<CADDY
+            $DOMAIN_SAN {
+                encode zstd gzip
+                log
+                reverse_proxy web:80
+            }
+
+            www.$DOMAIN_SAN {
+                redir https://$DOMAIN_SAN{uri} 308
+            }
+
+            :80 {
+                respond 200 "OK"
+            }
+            CADDY
 
             docker login ${{ env.REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME || github.actor }} -p ${{ secrets.REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
             docker network inspect heroes-net >/dev/null 2>&1 || docker network create heroes-net
 
             docker compose --env-file .env -f docker-compose.prod.yml pull || true
-            docker compose --env-file .env -f docker-compose.prod.yml up -d
+            docker compose --env-file .env -f docker-compose.prod.yml up -d --force-recreate --build caddy web
 
             docker image prune -f || true
