@@ -136,6 +136,13 @@ jobs:
             docker network inspect heroes-net >/dev/null 2>&1 || docker network create heroes-net
 
             docker compose --env-file .env -f docker-compose.prod.yml pull || true
-            docker compose --env-file .env -f docker-compose.prod.yml up -d --force-recreate --build caddy web
+            docker compose --env-file .env -f docker-compose.prod.yml up -d --force-recreate --build caddy web app
+
+            # run migrations and rebuild caches automatically
+            docker compose --env-file .env -f docker-compose.prod.yml exec -T app sh -lc '
+              php artisan migrate --force &&
+              php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan cache:clear &&
+              php artisan config:cache && php artisan route:cache && php artisan view:cache
+            '
 
             docker image prune -f || true

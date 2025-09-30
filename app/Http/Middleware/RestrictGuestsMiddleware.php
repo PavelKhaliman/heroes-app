@@ -18,7 +18,19 @@ class RestrictGuestsMiddleware
                 $isPost = $request->isMethod('POST');
 
                 $allowed = (
-                    ($isGet && (($request->is('/') || $request->is('')) || $request->is('link') || $request->is('account')))
+                    // public pages for authorized (same as guests) + account
+                    ($isGet && (
+                        ($request->is('/') || $request->is(''))
+                        || $request->is('link')
+                        || $request->is('clan')
+                        || $request->is('clan/regulation')
+                        || $request->is('clan/coslist')
+                        || $request->is('clan/application')
+                        || $request->is('forum')
+                        || $request->is('guide/*')
+                        || $request->is('gallery/*')
+                        || $request->is('account')
+                    ))
                     || ($isPost && $request->is('logout'))
                     || $request->is('media/*') || $request->is('build/*') || $request->is('assets/*') || $request->is('favicon.ico')
                 );
