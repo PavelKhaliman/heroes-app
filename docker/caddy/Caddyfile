@@ -1,0 +1,5 @@
+{$DOMAIN} {
+	encode gzip
+	log
+	reverse_proxy web:80
+}

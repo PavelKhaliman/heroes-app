@@ -47,6 +47,24 @@ services:
     volumes:
       - storage:/var/www/storage:ro
 
+  caddy:
+    image: caddy:2.8-alpine
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+      # Optional: provide ACME email to avoid rate limits
+      # ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
 volumes:
   pgdata:
   storage:
+  caddy_data:
+  caddy_config:
