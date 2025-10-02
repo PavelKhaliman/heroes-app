@@ -4,7 +4,7 @@
         <div class="flex justify-between items-center h-20">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <h1 class="welcome-title flex items-center text-white ml-[-2rem] sm:ml-[-3rem] lg:ml-[-4rem]" style="font-size: 1.5rem; line-height: 2rem;">
+                    <h1 class="welcome-title flex items-center text-white ml-0 sm:ml-[-2rem] lg:ml-[-4rem]" style="font-size: 1.5rem; line-height: 2rem;">
                         <a href="/" class="text-white font-extrabold no-underline hover:no-underline hover:text-white focus:text-white">HEROES</a>
                     </h1>
                 </div>

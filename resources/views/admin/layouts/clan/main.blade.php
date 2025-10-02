@@ -17,7 +17,6 @@
             background-image: url('{{ asset("Heroesback.png") }}');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
             min-height: 100vh;
             margin: 0;
             padding: 0;

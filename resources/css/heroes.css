@@ -120,11 +120,6 @@ nav {
     margin-top: 20px;
 }
 
-
-.clan-stats {
-    space-y: 8px;
-}
-
 .stat-item {
     display: flex;
     justify-content: space-between;
@@ -258,6 +253,8 @@ nav {
         padding: 12px;
         border-bottom: 1px solid rgba(255,255,255,0.1);
     }
+    /* Fix iOS half-screen issue with fixed background */
+    body { background-attachment: scroll !important; }
 }
 
 /* Utility: make images and tables responsive */
