@@ -16,6 +16,7 @@ class ForumReply extends Model
         'user_id',
         'title',
         'body',
+        'pinned',
     ];
 
     public function subsection(): BelongsTo
@@ -31,6 +32,11 @@ class ForumReply extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(ForumReplyAttachment::class);
+    }
+
+    public function scopePinnedFirst($query)
+    {
+        return $query->orderByDesc('pinned')->latest('id');
     }
 }
 

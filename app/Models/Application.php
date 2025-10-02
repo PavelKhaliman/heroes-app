@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Application extends Model
 {
@@ -32,6 +33,18 @@ class Application extends Model
             'pending' => 'В ожидании',
             'rejected' => 'Отклонен',
         ][$this->status] ?? $this->status;
+    }
+
+    public function votes(): HasMany
+    {
+        return $this->hasMany(ApplicationVote::class);
+    }
+
+    public function recalcTallies(): void
+    {
+        $this->votes_for = (int) $this->votes()->where('vote', 'for')->count();
+        $this->votes_against = (int) $this->votes()->where('vote', 'against')->count();
+        $this->save();
     }
 }
             

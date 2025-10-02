@@ -23,6 +23,8 @@ use App\Http\Controllers\User\Galery\Screenshot\UserScreenshotController;
 use App\Http\Controllers\User\Galery\Other\UserOtherController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Admin\User\AdminUserController;
+use App\Http\Controllers\Member\ApplicationVoteController;
+use Illuminate\Support\Facades\Auth;
 
 
 Route::get('/', function () {
@@ -87,6 +89,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/forum/{sectionSlug}/{subSlug}/replies', [ForumReplyController::class, 'store'])->name('forum.replies.store');
     Route::put('/forum/{sectionSlug}/{subSlug}/replies/{reply}', [ForumReplyController::class, 'update'])->name('forum.replies.update');
     Route::delete('/forum/{sectionSlug}/{subSlug}/replies/{reply}', [ForumReplyController::class, 'destroy'])->name('forum.replies.delete');
+    // pin/unpin for admins and moderators
+    Route::post('/forum/{sectionSlug}/{subSlug}/replies/{reply}/pin', function (string $sectionSlug, string $subSlug, \App\Models\ForumReply $reply) {
+        $user = Auth::user();
+        abort_unless($user && in_array($user->role, ['admin','moderator']), 403);
+        $reply->update(['pinned' => !$reply->pinned]);
+        return redirect()->route('forum.subsection', [$sectionSlug, $subSlug]);
+    })->name('forum.replies.pin');
+});
+
+// Member voting for applications (member or higher)
+Route::middleware(['auth','role:member,moderator,admin'])->group(function () {
+    Route::get('/member/applications', [ApplicationVoteController::class, 'index'])->name('member.applications.index');
+    Route::post('/member/applications/{application}/vote', [ApplicationVoteController::class, 'vote'])->name('member.applications.vote');
 });
 
 Route::get('/guide/east', function () {

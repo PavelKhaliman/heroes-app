@@ -30,6 +30,7 @@
                         <a href="/gallery/photo" class="nav-link">Галерея</a>
                         <a href="/link" class="nav-link">Связь</a>
                         <a href="/guide/north" class="nav-link">Гайды</a>
+                        <a href="https://coldgun.ru/tools" class="nav-link">Таблицы</a>
                         <a href="/account" class="nav-link">ЛК</a>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf

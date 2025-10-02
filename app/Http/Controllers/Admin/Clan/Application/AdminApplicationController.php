@@ -33,7 +33,7 @@ class AdminApplicationController extends Controller
 
     public function show(Application $application): View
     {
-        
+        $application->load(['votes.user']);
 
         return view('admin.clan.application.show', compact('application'));
     }

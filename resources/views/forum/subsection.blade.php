@@ -13,12 +13,24 @@
             <div class="bg-black/60 rounded p-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <div class="text-lg font-semibold">{{ $reply->title }}</div>
+                        <div class="text-lg font-semibold flex items-center gap-2">
+                            @if($reply->pinned)
+                                <span title="Закреплено" class="text-yellow-400">📌</span>
+                            @endif
+                            {{ $reply->title }}
+                        </div>
                         <div class="text-xs text-gray-400">Автор: {{ $reply->user->nickname ?? $reply->user->name }} · {{ $reply->created_at->diffForHumans() }}</div>
                     </div>
                     @auth
-                        @if(auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
+                        @php $role = auth()->user()->role; @endphp
+                        @if(auth()->id() === $reply->user_id || in_array($role, ['admin','moderator']))
                             <div class="flex gap-2">
+                                @if(in_array($role, ['admin','moderator']))
+                                    <form method="POST" action="{{ route('forum.replies.pin', [$section->slug, $subsection->slug, $reply]) }}">
+                                        @csrf
+                                        <button class="px-3 py-1 bg-yellow-600 hover:bg-yellow-500 rounded">{{ $reply->pinned ? 'Открепить' : 'Закрепить' }}</button>
+                                    </form>
+                                @endif
                                 <button type="button" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded" onclick="const el=document.getElementById('edit-reply-{{ $reply->id }}'); el.style.display = el.style.display === 'none' ? 'block' : 'none';">Редактировать</button>
                                 <form method="POST" action="{{ route('forum.replies.delete', [$section->slug, $subsection->slug, $reply]) }}">
                                     @csrf

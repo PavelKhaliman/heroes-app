@@ -62,8 +62,35 @@
                     </div>
                 </div>
 
+                <div class="bg-white/5 rounded p-4">
+                    <div class="text-white/80 font-semibold mb-2">Голосование</div>
+                    <div class="text-white/70 text-sm mb-3">Сумма: <span class="text-green-400">За {{ $application->votes_for }}</span> / <span class="text-red-400">Против {{ $application->votes_against }}</span></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-black/40 rounded p-3">
+                            <div class="text-sm text-green-400 font-semibold mb-2">Проголосовали ЗА ({{ $application->votes->where('vote','for')->count() }})</div>
+                            <ul class="text-sm text-white/90 list-disc list-inside space-y-1">
+                                @forelse($application->votes->where('vote','for') as $v)
+                                    <li>{{ $v->user->nickname ?? $v->user->name }}</li>
+                                @empty
+                                    <li class="text-white/60">Нет голосов</li>
+                                @endforelse
+                            </ul>
+                        </div>
+                        <div class="bg-black/40 rounded p-3">
+                            <div class="text-sm text-red-400 font-semibold mb-2">Проголосовали ПРОТИВ ({{ $application->votes->where('vote','against')->count() }})</div>
+                            <ul class="text-sm text-white/90 list-disc list-inside space-y-1">
+                                @forelse($application->votes->where('vote','against') as $v)
+                                    <li>{{ $v->user->nickname ?? $v->user->name }}</li>
+                                @empty
+                                    <li class="text-white/60">Нет голосов</li>
+                                @endforelse
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex gap-3 pt-2">
-                   
+                    
                     <form action="{{ route('admin.clan.application.status.update', $application) }}" method="POST">
                         @csrf
                         <input type="hidden" name="status" value="accepted">

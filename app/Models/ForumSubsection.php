@@ -26,7 +26,7 @@ class ForumSubsection extends Model
 
     public function replies(): HasMany
     {
-        return $this->hasMany(ForumReply::class)->latest();
+        return $this->hasMany(ForumReply::class)->orderByDesc('pinned')->latest();
     }
 }
 
