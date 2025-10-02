@@ -120,6 +120,7 @@ nav {
     margin-top: 20px;
 }
 
+
 .clan-stats {
     space-y: 8px;
 }
@@ -225,28 +226,50 @@ nav {
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .clan-sidebar {
+        width: 240px;
+    }
+}
+
 @media (max-width: 768px) {
     .welcome-content {
         padding: 40px 20px;
     }
-    
     .about-content {
         padding: 40px 20px;
     }
-    
     .welcome-title {
         font-size: 2.5rem;
     }
-    
     .section-title {
         font-size: 2.2rem;
     }
-    
     .welcome-subtitle {
         font-size: 1.1rem;
     }
-    
     .about-description {
         font-size: 1.1rem;
     }
+    /* Admin layout: stack sidebar */
+    .clan-sidebar {
+        width: 100%;
+        min-height: auto;
+        padding: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
 }
+
+/* Utility: make images and tables responsive */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Utility: mobile menu hidden handled by JS class toggle */
+#mobile-menu.hidden { display: none; }
