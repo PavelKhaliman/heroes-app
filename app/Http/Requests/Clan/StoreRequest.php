@@ -30,7 +30,7 @@ class StoreRequest extends FormRequest
             'nic_name' => ['bail','required','string','min:2','max:32', 'regex:/^[A-Za-zА-Яа-я0-9 _.-]+$/u'],
             'level' => ['bail','required','integer','min:1','max:315'],
             'strong' => ['bail','required','integer','min:0','max:100000000'],
-            'survival' => ['bail','required','integer','min:0','max:10000000'],
+            'survival' => ['bail','required','integer','min:0','max:10000000000'],
             'prime_msk' => ['bail','required','string','min:3','max:50', 'not_regex:'.$sqlPattern],
             'charecter_class' => ['bail','required','string','min:2','max:32', 'regex:/^[A-Za-zА-Яа-я0-9 _.-]+$/u'],
             'info' => ['bail','required','string','min:2','max:2000', 'not_regex:'.$sqlPattern],
