@@ -193,6 +193,7 @@ Route::middleware(['auth','role:admin,moderator'])->group(function () {
     Route::get('/admin/clan/application/{application}', [AdminApplicationController::class, 'show'])->name('admin.clan.application.show');
     Route::post('/admin/clan/application/{application}/status', [AdminApplicationController::class, 'update'])->name('admin.clan.application.status.update');
     Route::delete('/admin/clan/application/{application}', [AdminApplicationController::class, 'delete'])->name('admin.clan.application.delete');
+    Route::delete('/admin/clan/application', [AdminApplicationController::class, 'bulkDelete'])->name('admin.clan.application.bulk_delete');
 
     // forum sections
     Route::get('/admin/forum/sections', [AdminForumSectionController::class, 'index'])->name('admin.forum.sections.index');

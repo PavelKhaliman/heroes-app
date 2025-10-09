@@ -15,9 +15,13 @@
             @endif
 
             <div class="overflow-x-auto max-w-6xl mx-auto">
+                <form action="{{ route('admin.clan.application.bulk_delete') }}" method="POST" onsubmit="return confirm('Удалить выбранные заявки?');">
+                    @csrf
+                    @method('DELETE')
                 <table class="w-full text-left border-separate border-spacing-y-2">
                     <thead>
                         <tr class="text-white/80">
+                            <th class="px-3 py-2 w-10"><input type="checkbox" id="select-all" onclick="toggleAll(this)"></th>
                             <th class="px-3 py-2">Имя</th>
                             <th class="px-3 py-2">Возраст</th>
                             <th class="px-3 py-2">Ник</th>
@@ -38,12 +42,16 @@
                     </thead>
                     <tbody>
                         @forelse($applications as $app)
-                            <tr class="cursor-pointer {{ $app->status === 'accepted' ? 'bg-green-600/20 hover:bg-green-600/30' : ($app->status === 'rejected' ? 'bg-red-600/20 hover:bg-red-600/30' : 'bg-yellow-500/20 hover:bg-yellow-500/30') }}" onclick="window.location='{{ route('admin.clan.application.show', $app) }}'">
+                            <tr class="{{ $app->status === 'accepted' ? 'bg-green-600/20 hover:bg-green-600/30' : ($app->status === 'rejected' ? 'bg-red-600/20 hover:bg-red-600/30' : 'bg-yellow-500/20 hover:bg-yellow-500/30') }}">
+                                <td class="px-3 py-2 align-top">
+                                    <input type="checkbox" name="ids[]" value="{{ $app->id }}" class="row-check">
+                                </td>
                                 <td class="px-3 py-2 align-top text-white">{{ $app->name }}</td>
                                 <td class="px-3 py-2 align-top text-white">{{ $app->age }}</td>
                                 <td class="px-3 py-2 align-top text-white">{{ $app->nic_name }}</td>
                                 <td class="px-3 py-2 align-top text-white">{{ $app->status_label }}</td>
-                                <td class="px-2 py-2 align-top text-right w-10" onclick="event.stopPropagation();">
+                                <td class="px-2 py-2 align-top text-right w-10">
+                                    <a href="{{ route('admin.clan.application.show', $app) }}" class="text-white/80 hover:text-white underline mr-2">Открыть</a>
                                     <form action="{{ route('admin.clan.application.delete', $app) }}" method="POST" onsubmit="event.stopPropagation(); return confirm('Удалить заявку #{{ $app->id }}?');" class="inline-block">
                                         @csrf
                                         @method('DELETE')
@@ -66,7 +74,16 @@
                         @endforelse
                     </tbody>
                 </table>
+                <div class="max-w-6xl mx-auto mt-4 text-right">
+                    <button type="submit" class="bg-red-600 hover:bg-red-500 text-white font-medium px-4 py-2 rounded">Удалить выбранные</button>
+                </div>
+                </form>
             </div>
+            <script>
+                function toggleAll(master){
+                    document.querySelectorAll('.row-check').forEach(cb => { cb.checked = master.checked; });
+                }
+            </script>
         </div>
     </div>
 </div>

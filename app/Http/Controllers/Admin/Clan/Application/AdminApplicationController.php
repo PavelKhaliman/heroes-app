@@ -7,6 +7,7 @@ use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 
 class AdminApplicationController extends Controller
@@ -57,5 +58,18 @@ class AdminApplicationController extends Controller
         return redirect()
             ->route('admin.clan.application.show', $application)
             ->with('success', 'Статус обновлён');
+    }
+
+    public function bulkDelete(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => ['required','array','min:1'],
+            'ids.*' => ['integer','distinct'],
+        ]);
+
+        $ids = $validated['ids'];
+        Application::whereIn('id', $ids)->delete();
+
+        return redirect()->route('admin.clan.application.index')->with('success', 'Выбранные заявки удалены');
     }
 }
