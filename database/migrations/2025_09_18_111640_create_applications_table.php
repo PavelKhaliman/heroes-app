@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('kos_list');
             $table->string('status');
             $table->timestamps();
+            $table->index(['status']);
+            $table->index(['nic_name']);
         });
     }
 

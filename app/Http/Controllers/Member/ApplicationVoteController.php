@@ -17,7 +17,7 @@ class ApplicationVoteController extends Controller
         $applications = Application::whereIn('status', ['new','pending'])
             ->with(['votes.user'])
             ->latest('id')
-            ->get();
+            ->paginate(15);
 
         $userId = Auth::id();
         $userVotes = ApplicationVote::where('user_id', $userId)

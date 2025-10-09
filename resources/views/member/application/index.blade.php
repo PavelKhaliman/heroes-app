@@ -66,5 +66,11 @@
     @empty
         <div class="text-gray-400">Новых заявок для голосования нет.</div>
     @endforelse
+
+    @if(method_exists($applications, 'links'))
+        <div class="mt-6">
+            {{ $applications->links() }}
+        </div>
+    @endif
 </div>
 @endsection

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Clan\Coslist\AdminCoslistController;
 use App\Http\Controllers\Public\Clan\Info\PublicInfoController;
 use App\Http\Controllers\Public\Clan\Regulation\PublicRegulationController;
 use App\Http\Controllers\Public\Clan\Application\PublicApplicationController;
+use Illuminate\Support\Facades\RateLimiter;
 use App\Http\Controllers\Public\Link\PublicContactController;
 use App\Http\Controllers\Admin\Link\AdminContactController;
 use App\Http\Controllers\Public\Forum\PublicForumController;
@@ -42,7 +43,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/clan', [PublicInfoController::class, 'index'])->name('clan.info.index');
 Route::get('/clan/regulation', [PublicRegulationController::class, 'index'])->name('clan.regulation');
 Route::get('/clan/application', [PublicApplicationController::class, 'create'])->name('clan.application');
-Route::post('/clan/application', [PublicApplicationController::class, 'store'])->name('clan.application.store');
+Route::post('/clan/application', [PublicApplicationController::class, 'store'])
+    ->middleware('throttle:application-submissions')
+    ->name('clan.application.store');
 
 Route::get('/clan/coslist', [\App\Http\Controllers\Public\Clan\Coslist\PublicCoslistController::class, 'index'])->name('clan.coslist.index');
 
