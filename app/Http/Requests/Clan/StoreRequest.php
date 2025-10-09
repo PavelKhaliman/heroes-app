@@ -25,15 +25,15 @@ class StoreRequest extends FormRequest
         $sqlPattern = '/(select\s+.*from|union\s+select|insert\s+into|update\s+.*set|delete\s+from|drop\s+table|--|\/\*|\*\/|;)/i';
 
         return [
-            'name' => ['bail','required','string','min:2','max:50'],
+            'name' => ['bail','required','string','min:2','max:20'],
             'age' => ['bail','required','integer','min:12','max:100'],
             'nic_name' => ['bail','required','string','min:2','max:32', 'regex:/^[A-Za-zА-Яа-я0-9 _.-]+$/u'],
-            'level' => ['bail','required','integer','min:1','max:200'],
-            'strong' => ['bail','required','integer','min:0','max:1000'],
-            'survival' => ['bail','required','integer','min:0','max:1000'],
+            'level' => ['bail','required','integer','min:1','max:315'],
+            'strong' => ['bail','required','integer','min:0','max:100000000'],
+            'survival' => ['bail','required','integer','min:0','max:10000000'],
             'prime_msk' => ['bail','required','string','min:3','max:50', 'not_regex:'.$sqlPattern],
             'charecter_class' => ['bail','required','string','min:2','max:32', 'regex:/^[A-Za-zА-Яа-я0-9 _.-]+$/u'],
-            'info' => ['bail','required','string','min:20','max:2000', 'not_regex:'.$sqlPattern],
+            'info' => ['bail','required','string','min:2','max:2000', 'not_regex:'.$sqlPattern],
             'kos_list' => ['bail','required','string','min:2','max:255', 'not_regex:'.$sqlPattern],
             // honeypot field (must be empty)
             'website' => ['nullable','string','size:0'],
