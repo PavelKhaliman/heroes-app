@@ -10,6 +10,8 @@
             <h1 class="welcome-title mb-8">Заявка на вступление</h1>
             <form action="/clan/application" method="POST" class="max-w-5xl mx-auto text-left">
                 @csrf
+                <!-- Honeypot field -->
+                <input type="text" name="website" value="" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-5000px;width:1px;height:1px;opacity:0;" />
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     <div>
                         <label for="name" class="block mb-2 text-white/90">Имя</label>
