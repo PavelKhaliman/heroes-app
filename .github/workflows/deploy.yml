@@ -135,6 +135,21 @@ jobs:
             docker login ${{ env.REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME || github.actor }} -p ${{ secrets.REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
             docker network inspect heroes-net >/dev/null 2>&1 || docker network create heroes-net
 
+            echo "[deploy] Checking listeners before freeing ports 80/443"
+            ss -ltnp | awk '/:(80|443) /{print}' || true
+
+            echo "[deploy] Stopping host services that may hold 80/443 (nginx/apache2/caddy)"
+            for svc in nginx apache2 caddy; do
+              systemctl stop "$svc" 2>/dev/null || true
+              systemctl disable "$svc" 2>/dev/null || true
+            done
+
+            # ensure previous caddy container is stopped to free ports
+            docker compose --env-file .env -f docker-compose.prod.yml down caddy || true
+
+            echo "[deploy] Listeners after stopping services (should be empty for 80/443)"
+            ss -ltnp | awk '/:(80|443) /{print}' || true
+
             docker compose --env-file .env -f docker-compose.prod.yml pull || true
             docker compose --env-file .env -f docker-compose.prod.yml up -d --force-recreate --build caddy web app
 
