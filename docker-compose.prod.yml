@@ -16,6 +16,7 @@ services:
       context: .
       target: app
     image: ${APP_IMAGE:-heroes-app:latest}
+    restart: unless-stopped
     depends_on:
       - db
     environment:
@@ -40,6 +41,7 @@ services:
       context: .
       target: web
     image: ${WEB_IMAGE:-heroes-web:latest}
+    restart: unless-stopped
     depends_on:
       - app
     ports:
@@ -49,6 +51,7 @@ services:
 
   caddy:
     image: caddy:2.8-alpine
+    restart: unless-stopped
     depends_on:
       - web
     ports:
