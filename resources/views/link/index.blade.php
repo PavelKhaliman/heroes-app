@@ -12,8 +12,10 @@
                 @if(!empty(optional($contact)->telegram))
                     <div class="mb-3"><span class="text-white/70">Telegram:</span> <span class="text-white">{{ $contact->telegram }}</span></div>
                 @endif
-                @if(!empty(optional($contact)->teamspeak))
-                    <div class="mb-3"><span class="text-white/70">Teamspeak:</span> <span class="text-white">{{ $contact->teamspeak }}</span></div>
+                @if(auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isModerator() || auth()->user()->isMember()))
+                    @if(!empty(optional($contact)->teamspeak))
+                        <div class="mb-3"><span class="text-white/70">Teamspeak:</span> <span class="text-white">{{ $contact->teamspeak }}</span></div>
+                    @endif
                 @endif
                 @if(!empty(optional($contact)->officers))
                     <div class="mb-3"><span class="text-white/70">Офицеры:</span>

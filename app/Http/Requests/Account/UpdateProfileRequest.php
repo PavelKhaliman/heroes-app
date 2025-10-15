@@ -16,6 +16,7 @@ class UpdateProfileRequest extends FormRequest
         return [
             'name' => ['nullable','string','max:255'],
             'nickname' => ['nullable','string','max:255'],
+            'telegram' => ['nullable','string','max:255'],
             'character_class' => ['nullable','string','max:255'],
         ];
     }

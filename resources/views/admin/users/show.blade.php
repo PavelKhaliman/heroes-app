@@ -27,6 +27,10 @@
                         <div class="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white">{{ $user->nickname ?? '—' }}</div>
                     </div>
                     <div>
+                        <div class="block mb-2 text-white">Telegram</div>
+                        <div class="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white">{{ $user->telegram ?? '—' }}</div>
+                    </div>
+                    <div>
                         <div class="block mb-2 text-white">Класс персонажа</div>
                         <div class="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white">{{ $user->character_class ?? '—' }}</div>
                     </div>

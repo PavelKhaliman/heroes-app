@@ -25,6 +25,7 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'nickname',
+        'telegram',
         'character_class',
         'avatar_path',
     ];

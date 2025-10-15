@@ -15,7 +15,7 @@
                     <div class="text-lg font-semibold">{{ $app->nic_name }} ({{ $app->charecter_class }})</div>
                     <div class="text-sm text-gray-300">Уровень: {{ $app->level }} · Возраст: {{ $app->age }} · Прайм (МСК): {{ $app->prime_msk }}</div>
                     <div class="mt-2 text-sm text-gray-300">Статус: {{ $app->status_label }}</div>
-                    <div class="mt-2 text-sm">БОЕВЫЕ: {{ $app->strong }}, ВЫЖИВАЕМОСТЬ: {{ $app->survival }}, КОСы: {{ $app->kos_list }}</div>
+                    <div class="mt-2 text-sm">БОЕВЫЕ: {{ $app->strong }}, ВЫЖИВАЕМОСТЬ: {{ $app->survival }}, ПА: {{ $app->pa ?? '—' }}, ПЗ: {{ $app->pz ?? '—' }}, КОСы: {{ $app->kos_list }}</div>
                     <div class="mt-2 whitespace-pre-wrap">{{ $app->info }}</div>
 
                     @php $role = auth()->user()->role ?? null; @endphp

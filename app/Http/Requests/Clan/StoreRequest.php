@@ -31,6 +31,8 @@ class StoreRequest extends FormRequest
             'level' => ['bail','required','integer','min:1','max:315'],
             'strong' => ['bail','required','integer','min:0','max:100000000'],
             'survival' => ['bail','required','integer','min:0','max:10000000000'],
+            'pa' => ['bail','required','integer','min:30','max:700'],
+            'pz' => ['bail','required','integer','min:30','max:700'],
             'prime_msk' => ['bail','required','string','min:3','max:50', 'not_regex:'.$sqlPattern],
             'charecter_class' => ['bail','required','string','min:2','max:32', 'regex:/^[A-Za-zА-Яа-я0-9 _.-]+$/u'],
             'info' => ['bail','required','string','min:2','max:2000', 'not_regex:'.$sqlPattern],
@@ -71,6 +73,8 @@ class StoreRequest extends FormRequest
             $level = (int) $this->input('level');
             $strong = (int) $this->input('strong');
             $survival = (int) $this->input('survival');
+            $pa = (int) $this->input('pa');
+            $pz = (int) $this->input('pz');
             $name = trim((string) $this->input('name'));
             $nick = trim((string) $this->input('nic_name'));
             $prime = trim((string) $this->input('prime_msk'));
@@ -78,7 +82,7 @@ class StoreRequest extends FormRequest
             $kos = trim((string) $this->input('kos_list'));
             $info = trim((string) $this->input('info'));
 
-            $lowNums = [$age <= 1, $level <= 1, $strong <= 1, $survival <= 1];
+            $lowNums = [$age <= 1, $level <= 1, $strong <= 1, $survival <= 1, $pa < 30, $pz < 30];
             $ones = [($name === '1'), ($nick === '1'), ($prime === '1'), ($class === '1'), ($kos === '1')];
 
             if (count(array_filter($lowNums)) === 4 && count(array_filter($ones)) >= 3 && strlen($info) < 30) {

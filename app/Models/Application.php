@@ -21,6 +21,8 @@ class Application extends Model
             'status',
             'strong',
             'survival',
+            'pa',
+            'pz',
             'prime_msk',
             'kos_list',
     ];

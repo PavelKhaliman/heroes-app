@@ -52,6 +52,10 @@
                                 <input name="nickname" value="{{ old('nickname', $user->nickname) }}" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white" />
                             </div>
                             <div>
+                                <label class="block mb-1 text-white/80">Telegram</label>
+                                <input name="telegram" value="{{ old('telegram', $user->telegram) }}" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white" placeholder="@username" />
+                            </div>
+                            <div>
                                 <label class="block mb-1 text-white/80">Класс персонажа</label>
                                 <input name="character_class" value="{{ old('character_class', $user->character_class) }}" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white" />
                             </div>

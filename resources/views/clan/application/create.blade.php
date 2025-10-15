@@ -60,6 +60,22 @@
                             <p class="mt-2 text-red-400 text-sm">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <div>
+                        <label for="pa" class="block mb-2 text-white/90">Показатель атаки</label>
+                        <input id="pa" name="pa" type="number" min="30" max="700" value="{{ old('pa') }}" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="30 - 700">
+                        @error('pa')
+                            <p class="mt-2 text-red-400 text-sm">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="pz" class="block mb-2 text-white/90">Показатель защиты</label>
+                        <input id="pz" name="pz" type="number" min="30" max="700" value="{{ old('pz') }}" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="30 - 700">
+                        @error('pz')
+                            <p class="mt-2 text-red-400 text-sm">{{ $message }}</p>
+                        @enderror
+                    </div>
                     
                     <div>
                         <label for="kos_list" class="block mb-2 text-white/90">Наличие косов</label>
