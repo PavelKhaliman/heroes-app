@@ -15,7 +15,7 @@ class StorePersonalRequest extends FormRequest
     {
         return [
             'nicname' => ['required','string'],
-            'guild' => ['required','string'],
+            'guild' => ['nullable','string'],
             'reason' => ['required','string'],
             'repayment' => ['required','string'],
         ];

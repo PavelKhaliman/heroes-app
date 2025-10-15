@@ -15,7 +15,7 @@ class StoreGuildRequest extends FormRequest
     {
         return [
             'guild' => ['required','string'],
-            'master' => ['required','string'],
+            'master' => ['nullable','string'],
             'reason' => ['required','string'],
             'repayment' => ['required','string'],
         ];

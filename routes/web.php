@@ -177,10 +177,12 @@ Route::middleware(['auth','role:admin,moderator'])->group(function () {
 
     // Coslist
     Route::get('/admin/clan/coslist', [AdminCoslistController::class, 'index'])->name('admin.clan.coslist.index');
+    Route::get('/admin/clan/coslist/{coslist}/edit', [AdminCoslistController::class, 'edit'])->name('admin.clan.coslist.edit');
     Route::get('/admin/clan/coslist/create/personal', [AdminCoslistController::class, 'createPersonal'])->name('admin.clan.coslist.create.personal');
     Route::get('/admin/clan/coslist/create/guild', [AdminCoslistController::class, 'createGuild'])->name('admin.clan.coslist.create.guild');
     Route::post('/admin/clan/coslist/store/personal', [AdminCoslistController::class, 'storePersonal'])->name('admin.clan.coslist.store.personal');
     Route::post('/admin/clan/coslist/store/guild', [AdminCoslistController::class, 'storeGuild'])->name('admin.clan.coslist.store.guild');
+    Route::put('/admin/clan/coslist/{coslist}', [AdminCoslistController::class, 'update'])->name('admin.clan.coslist.update');
     Route::delete('/admin/clan/coslist/{coslist}', [AdminCoslistController::class, 'delete'])->name('admin.clan.coslist.delete');
 
     // regulation

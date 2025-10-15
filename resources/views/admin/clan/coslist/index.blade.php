@@ -33,14 +33,14 @@
 									<col style="width:400px" />
 									<col style="width:200px" />
 									<col style="width:200px" />
-								</colgroup>
+                                </colgroup>
 								<thead class="text-white">
 									<tr>
 									<th class="px-4 py-2">Ник</th>
 									<th class="px-4 py-2">Клан</th>
 									<th class="px-4 py-2">Причина</th>
 									<th class="px-4 py-2">Выкуп</th>
-                                    <th class="px-4 py-2 text-center">Удалить</th>
+                                    <th class="px-4 py-2 text-center">Действия</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -51,6 +51,7 @@
 										<td class="px-4 py-2 break-words">{{ $item->reason }}</td>
 										<td class="px-4 py-2 break-words">{{ $item->repayment }}</td>
                                         <td class="px-2 py-2 align-middle text-center w-10" onclick="event.stopPropagation();">
+                                            <a href="{{ route('admin.clan.coslist.edit', $item) }}" class="text-white/80 hover:text-white underline mr-2">Редактировать</a>
                                             <form action="{{ route('admin.clan.coslist.delete', $item) }}" method="POST" onsubmit="event.stopPropagation(); return confirm('Удалить запись #{{ $item->id }}?');" class="inline-block">
                                                 @csrf
                                                 @method('DELETE')
@@ -86,14 +87,14 @@
 									<col style="width:400px" />
 									<col style="width:200px" />
 									<col style="width:200px" />
-								</colgroup>
+                                </colgroup>
 								<thead class="text-white">
 									<tr>
 									<th class="px-4 py-2">Клан</th>
 									<th class="px-4 py-2">Мастер</th>
 									<th class="px-4 py-2">Причина</th>
 									<th class="px-4 py-2">Выкуп</th>
-                                    <th class="px-4 py-2 text-center">Удалить</th>
+                                    <th class="px-4 py-2 text-center">Действия</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -104,6 +105,7 @@
 										<td class="px-4 py-2 break-words">{{ $item->reason }}</td>
 										<td class="px-4 py-2 break-words">{{ $item->repayment }}</td>
                                         <td class="px-2 py-2 align-middle text-center w-10" onclick="event.stopPropagation();">
+                                            <a href="{{ route('admin.clan.coslist.edit', $item) }}" class="text-white/80 hover:text-white underline mr-2">Редактировать</a>
                                             <form action="{{ route('admin.clan.coslist.delete', $item) }}" method="POST" onsubmit="event.stopPropagation(); return confirm('Удалить запись #{{ $item->id }}?');" class="inline-block">
                                                 @csrf
                                                 @method('DELETE')

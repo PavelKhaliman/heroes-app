@@ -17,9 +17,9 @@
                     @enderror
                 </div>
 
-				<div class="mb-4">
-					<label for="guild" class="block text-left mb-2 text-white">Клан</label>
-                    <input id="guild" name="guild" type="text" value="{{ old('guild') }}" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="Введите название клана">
+                <div class="mb-4">
+                    <label for="guild" class="block text-left mb-2 text-white">Клан (необязательно)</label>
+                    <input id="guild" name="guild" type="text" value="{{ old('guild') }}" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="Оставьте пустым, если нет">
                     @error('guild')
                         <p class="mt-2 text-red-400 text-sm">{{ $message }}</p>
                     @enderror

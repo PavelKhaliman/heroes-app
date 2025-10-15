@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Coslist;
 use App\Http\Requests\Admin\Clan\Coslist\StoreGuildRequest;
 use App\Http\Requests\Admin\Clan\Coslist\StorePersonalRequest;
+use App\Http\Requests\Admin\Clan\Coslist\UpdateRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Admin\Clan\Coslist\StoreRequest;
@@ -69,5 +70,19 @@ class AdminCoslistController extends Controller
 
         
         return redirect()->route('admin.clan.coslist.index');
+    }
+
+    public function edit(Coslist $coslist): View
+    {
+        return view('admin.clan.coslist.edit', compact('coslist'));
+    }
+
+    public function update(UpdateRequest $request, Coslist $coslist): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $coslist->update($validated);
+
+        return redirect()->route('admin.clan.coslist.index')->with('success', 'Запись обновлена');
     }
 }

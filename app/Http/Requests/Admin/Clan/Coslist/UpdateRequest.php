@@ -23,8 +23,8 @@ class UpdateRequest extends FormRequest
     {
         return [
             'nicname' => ['required','string'],
-            'guild' => ['required','string'],
-            'master' => ['required','string'],
+            'guild' => ['nullable','string'],
+            'master' => ['nullable','string'],
             'reason' => ['required','string'],
             'repayment' => ['required','string'], 
         ];
